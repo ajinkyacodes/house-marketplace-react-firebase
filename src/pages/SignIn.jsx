@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
+import OAuth from "../components/OAuth";
 
 function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +38,7 @@ function SignIn() {
       if (userCredential.user) {
         navigate("/");
       }
-    } catch (error) {      
+    } catch (error) {
       toast.error("Invalid Credentials");
     }
   };
@@ -83,7 +84,7 @@ function SignIn() {
             </button>
           </div>
         </form>
-        {/** Google OAuth */}
+        <OAuth />
         <Link to="/sign-up" className="registerLink">
           Don't have account? Sign Up Here!
         </Link>
