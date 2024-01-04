@@ -819,3 +819,8 @@ button {
   font-size: 0.8rem;
   opacity: 0.75;
 }
+
+/* Hide Leaflet Control Box */
+.leaflet-control-attribution.leaflet-control {
+  display: none;
+}
