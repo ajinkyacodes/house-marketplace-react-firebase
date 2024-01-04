@@ -6,13 +6,15 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { useNavigate } from "react-router-dom";
-import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
+import Spinner from "../components/Spinner";
 
 function CreateListing() {
+  // eslint-disable-next-line
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -65,23 +67,23 @@ function CreateListing() {
     return () => {
       isMounted.current = false;
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMounted]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
+
     setLoading(true);
 
     if (discountedPrice >= regularPrice) {
       setLoading(false);
-      toast.error("Dicounted price needs to be less than regular price.");
+      toast.error("Discounted price needs to be less than regular price");
       return;
     }
 
     if (images.length > 6) {
       setLoading(false);
-      toast.error("Maximum 6 image uploads");
+      toast.error("Max 6 images");
       return;
     }
 
@@ -92,6 +94,7 @@ function CreateListing() {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.REACT_APP_GMAP_API_KEY}`
       );
+
       const data = await response.json();
 
       geolocation.lat = data.results[0]?.geometry.location.lat ?? 0;
@@ -110,16 +113,16 @@ function CreateListing() {
     } else {
       geolocation.lat = latitude;
       geolocation.lng = longitude;
-      location = address;
     }
 
-    // Store Images in Firebase Storage
+    // Store image in firebase
     const storeImage = async (image) => {
       return new Promise((resolve, reject) => {
         const storage = getStorage();
         const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
 
         const storageRef = ref(storage, "images/" + fileName);
+
         const uploadTask = uploadBytesResumable(storageRef, image);
 
         uploadTask.on(
@@ -135,10 +138,11 @@ function CreateListing() {
               case "running":
                 console.log("Upload is running");
                 break;
+              default:
+                break;
             }
           },
           (error) => {
-            // Handle unsuccessful uploads
             reject(error);
           },
           () => {
@@ -152,7 +156,7 @@ function CreateListing() {
       });
     };
 
-    const imgUrls = await Promise.all(
+    const imageUrls = await Promise.all(
       [...images].map((image) => storeImage(image))
     ).catch(() => {
       setLoading(false);
@@ -160,9 +164,22 @@ function CreateListing() {
       return;
     });
 
-    console.log(imgUrls);
+    const formDataCopy = {
+      ...formData,
+      imageUrls,
+      geolocation,
+      timestamp: serverTimestamp(),
+    };
 
+    formDataCopy.location = address;
+    delete formDataCopy.images;
+    delete formDataCopy.address;
+    !formDataCopy.offer && delete formDataCopy.discountedPrice;
+
+    const docRef = await addDoc(collection(db, "listings"), formDataCopy);
     setLoading(false);
+    toast.success("Listing saved");
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
   };
 
   const onMutate = (e) => {
@@ -171,7 +188,6 @@ function CreateListing() {
     if (e.target.value === "true") {
       boolean = true;
     }
-
     if (e.target.value === "false") {
       boolean = false;
     }
@@ -200,8 +216,9 @@ function CreateListing() {
   return (
     <div className="profile">
       <header>
-        <p className="pageHeader">Create a listing</p>
+        <p className="pageHeader">Create a Listing</p>
       </header>
+
       <main>
         <form onSubmit={onSubmit}>
           <label className="formLabel">Sell / Rent</label>
