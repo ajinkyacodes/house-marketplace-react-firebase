@@ -38,7 +38,6 @@ function Listing() {
 
   return (
     <main>
-      {/* SLIDER */}
       <Swiper slidesPerView={1} pagination={{ clickable: true }}>
         {listing.imageUrls.map((url, index) => (
           <SwiperSlide key={index}>
