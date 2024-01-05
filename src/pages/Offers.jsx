@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import {
   collection,
   getDocs,
@@ -18,8 +17,6 @@ function Offers() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lastFetchedListing, setLastFetchedListing] = useState(null);
-
-  const params = useParams();
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -95,9 +92,7 @@ function Offers() {
   return (
     <div className="category">
       <header>
-        <p className="pageHeader">
-          Offers
-        </p>
+        <p className="pageHeader">Offers</p>
       </header>
       {loading ? (
         <Spinner />
@@ -114,7 +109,7 @@ function Offers() {
               ))}
             </ul>
           </main>
-          
+
           <br />
           <br />
           {lastFetchedListing && (
@@ -122,7 +117,6 @@ function Offers() {
               Load More
             </p>
           )}
-          
         </>
       ) : (
         <p>There are no current offers.</p>
