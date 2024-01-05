@@ -21,6 +21,10 @@ function Category() {
 
   const params = useParams();
 
+  // Load Number of Listings Limit
+  const initialListingsLimit = 3;
+  const moreListingsLimit = 3;
+
   useEffect(() => {
     const fetchListings = async () => {
       try {
@@ -32,7 +36,7 @@ function Category() {
           listingsRef,
           where("type", "==", params.categoryName),
           orderBy("timestamp", "desc"),
-          limit(3) // Initial number of listings
+          limit(initialListingsLimit) // Initial number of listings
         );
 
         // Execute query
@@ -69,7 +73,7 @@ function Category() {
         where("type", "==", params.categoryName),
         orderBy("timestamp", "desc"),
         startAfter(lastFetchedListing),
-        limit(1) // Load more number of listings
+        limit(moreListingsLimit) // Load more number of listings
       );
 
       // Execute query

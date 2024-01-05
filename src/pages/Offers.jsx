@@ -18,6 +18,10 @@ function Offers() {
   const [loading, setLoading] = useState(true);
   const [lastFetchedListing, setLastFetchedListing] = useState(null);
 
+  // Load Number of Listings Limit
+  const initialListingsLimit = 3;
+  const moreListingsLimit = 3;
+
   useEffect(() => {
     const fetchListings = async () => {
       try {
@@ -29,7 +33,7 @@ function Offers() {
           listingsRef,
           where("offer", "==", true),
           orderBy("timestamp", "desc"),
-          limit(3) // Initial number of listings
+          limit(initialListingsLimit) // Initial number of listings
         );
 
         // Execute query
@@ -66,7 +70,7 @@ function Offers() {
         where("offer", "==", true),
         orderBy("timestamp", "desc"),
         startAfter(lastFetchedListing),
-        limit(1) // Load more number of listings
+        limit(moreListingsLimit) // Load more number of listings
       );
 
       // Execute query
