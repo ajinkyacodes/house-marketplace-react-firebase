@@ -824,3 +824,8 @@ button {
 .leaflet-control-attribution.leaflet-control {
   display: none;
 }
+
+.mainContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+}

@@ -17,7 +17,7 @@ import EditListing from "./pages/EditListing";
 
 function App() {
   return (
-    <>
+    <div className="mainContainer">
       <Router>
         <Routes>
           <Route path="/" element={<Explore />} />
@@ -37,7 +37,7 @@ function App() {
         <Navbar />
       </Router>
       <ToastContainer />
-    </>
+    </div>
   );
 }
 
